@@ -11,10 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-GO    := GO15VENDOREXPERIMENT=1 go
-PROMU := $(GOPATH)/bin/promu
+GO    := CGO_ENABLED=1 go
 pkgs   = ./
 package_name = database_exporter
+GOOS = linux
+GOARCH = amd64
 
 PREFIX              ?= $(shell pwd)
 BIN_DIR             ?= $(shell pwd)
@@ -42,7 +43,15 @@ vet:
 
 build:
 	@echo ">> building binaries"
-	@go build -o $(package_name)
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(GO) build -o $(package_name)
+
+xgo:
+	@(GO) get github.com/karalabe/xgo
+	@xgo --targets=linux/amd64,windows/amd64,darwin/amd64 github.com/xshrim/database_exporter
+
+package: build
+	@echo ">> packaging release tarball"
+	@tar -zcvf $(package_name).tgz $(package_name) $(package_name).yml config
 
 tarball: promu
 	@echo ">> building release tarball"
@@ -51,11 +60,5 @@ tarball: promu
 docker:
 	@echo ">> building docker image"
 	@docker build -t "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" .
-
-promu:
-	@GOOS=$(shell uname -s | tr A-Z a-z) \
-		GOARCH=$(subst x86_64,amd64,$(patsubst i%86,386,$(shell uname -m))) \
-		$(GO) get -u github.com/prometheus/promu
-
 
 .PHONY: all style format build test vet tarball docker promu
