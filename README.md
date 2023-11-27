@@ -122,6 +122,9 @@ metrics:
     key_labels:
       # Populated from the `market` column of each row.
       - Market
+    static_labels:
+      # Arbitrary key/value pair
+      portfolio: income
     values: [LastUpdateTime]
     query: |
       SELECT Market, max(UpdateTime) AS LastUpdateTime
@@ -141,17 +144,17 @@ While this works out of the box with the [MS SQL Server](https://github.com/deni
 a schema and the [Clickhouse](https://github.com/kshvakov/clickhouse) one uses `tcp://`. So Database Exporter does a bit of massaging
 of DSNs for the latter two drivers in order for this to work:
 
-DB | Database Exporter expected DSN | Driver sees
-:---|:---|:---
-MySQL | `mysql://user:passw@protocol(host:port)/dbname` | `user:passw@protocol(host:port)/dbname`
-Oracle | `oracle://user/password@host:port/sid` | `user/password@host:port/sid`
-PostgreSQL | `postgres://user:passw@host:port/dbname` | *unchanged*
-SQL Server | `sqlserver://user:passw@host:port/instance` | *unchanged*
-SQLite3 | `sqlite3://file:mybase.db?cache=shared&mode=rwc` | `file:mybase.db?cache=shared&mode=rwc`
-in-memory SQLite3 | `sqlite3://file::memory:?mode=memory&cache=shared` | `file::memory:?mode=memory&cache=shared`
-Clickhouse | `clickhouse://host:port?username=user&password=passw&database=db` | `tcp://host:port?username=user&password=passw&database=db`
-Couchbase instance | `n1ql://host:port@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s` | `host:port`
-Couchbase cluster | `n1ql://http://host:port/@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s` | `http://host:port/`
+| DB                 | Database Exporter expected DSN                                                              | Driver sees                                                  |
+| :----------------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------------- |
+| MySQL              | `mysql://user:passw@protocol(host:port)/dbname`                                           | `user:passw@protocol(host:port)/dbname`                    |
+| Oracle             | `oracle://user/password@host:port/sid`                                                    | `user/password@host:port/sid`                              |
+| PostgreSQL         | `postgres://user:passw@host:port/dbname`                                                  | *unchanged*                                                |
+| SQL Server         | `sqlserver://user:passw@host:port/instance`                                               | *unchanged*                                                |
+| SQLite3            | `sqlite3://file:mybase.db?cache=shared&mode=rwc`                                          | `file:mybase.db?cache=shared&mode=rwc`                     |
+| in-memory SQLite3  | `sqlite3://file::memory:?mode=memory&cache=shared`                                        | `file::memory:?mode=memory&cache=shared`                   |
+| Clickhouse         | `clickhouse://host:port?username=user&password=passw&database=db`                         | `tcp://host:port?username=user&password=passw&database=db` |
+| Couchbase instance | `n1ql://host:port@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s`         | `host:port`                                                |
+| Couchbase cluster  | `n1ql://http://host:port/@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s` | `http://host:port/`                                        |
 
 ## Why It Exists
 

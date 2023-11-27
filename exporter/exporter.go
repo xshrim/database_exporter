@@ -2,6 +2,7 @@ package exporter
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"sync"
 
@@ -9,6 +10,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
 )
+
+var dsnOverride = flag.String("config.data-source-name", "", "Data source name to override the value in the configuration file with.")
 
 // Exporter is a prometheus.Gatherer that gathers SQL metrics from targets and merges them with the default registry.
 type Exporter interface {
@@ -33,6 +36,15 @@ func NewExporter(configFile string) (Exporter, error) {
 	if err != nil {
 		return nil, err
 	}
+
+		// Override the DSN if requested (and in single target mode).
+		if *dsnOverride != "" {
+			if len(c.Jobs) > 0 {
+				return nil, fmt.Errorf("The config.data-source-name flag (value %q) only applies in single target mode", *dsnOverride)
+			} else {
+				c.Target.DSN = Secret(*dsnOverride)
+			}
+		}
 
 	var targets []Target
 	if c.Target != nil {

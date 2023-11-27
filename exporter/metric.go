@@ -9,6 +9,23 @@ import (
 	dto "github.com/prometheus/client_model/go"
 )
 
+// labelPairSorter implements sort.Interface.
+// It provides a sortable version of a slice of dto.LabelPair pointers.
+
+type labelPairSorter []*dto.LabelPair
+
+func (s labelPairSorter) Len() int {
+	return len(s)
+}
+
+func (s labelPairSorter) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s labelPairSorter) Less(i, j int) bool {
+	return s[i].GetName() < s[j].GetName()
+}
+
 // MetricDesc is a descriptor for a family of metrics, sharing the same name, help, labes, type.
 type MetricDesc interface {
 	Name() string
@@ -48,9 +65,19 @@ func NewMetricFamily(logContext string, mc *MetricConfig, constLabels []*dto.Lab
 		labels = append(labels, mc.ValueLabel)
 	}
 
+	sortedLabels := append(constLabels[:0:0], constLabels...)
+
+	for k, v := range mc.StaticLabels {
+		sortedLabels = append(sortedLabels, &dto.LabelPair{
+			Name:  proto.String(k),
+			Value: proto.String(v),
+		})
+	}
+	sort.Sort(labelPairSorter(sortedLabels))
+
 	return &MetricFamily{
 		config:      mc,
-		constLabels: constLabels,
+		constLabels: sortedLabels,
 		labels:      labels,
 		logContext:  logContext,
 	}, nil
@@ -229,7 +256,7 @@ func makeLabelPairs(desc MetricDesc, labelValues []string) []*dto.LabelPair {
 		})
 	}
 	labelPairs = append(labelPairs, constLabels...)
-	sort.Sort(prometheus.LabelPairSorter(labelPairs))
+	sort.Sort(labelPairSorter(labelPairs))
 	return labelPairs
 }
 

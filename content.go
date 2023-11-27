@@ -5,12 +5,12 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/Corundex/database_exporter/exporter"
+	"database_exporter/exporter"
 )
 
 const (
 	// DocsURL - ref to the documentation
-	DocsURL   = "https://github.com/Corundex/database_exporter#readme"
+	DocsURL   = "https://github.com/xshrim/database_exporter#readme"
 	templates = `
     {{ define "page" -}}
       <html>
