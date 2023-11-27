@@ -1,12 +1,11 @@
 FROM        ghcr.io/oracle/oraclelinux7-instantclient:19
 WORKDIR     /exporter/
-RUN         yum -y update && yum clean all
-RUN         yum -y install libaio
 
-ADD         https://github.com/xshrim/database_exporter/releases/download/0.6.6/database_exporter.tar.gz /exporter/
-RUN         tar -xzvf database_exporter.tar.gz
+ADD         database_exporter.tgz /exporter/
+
+RUN         yum -y update && yum clean all && yum -y install libaio make gcc gcc-c++ glib-headers
 
 EXPOSE      9285
 
-ENTRYPOINT  [ "/exporter/database_exporter", "-logtostderr=true" ]
+CMD  [ "/exporter/database_exporter", "-logtostderr=true" ]
 
