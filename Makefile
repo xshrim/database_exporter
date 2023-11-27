@@ -43,7 +43,7 @@ vet:
 
 build:
 	@echo ">> building binaries"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(GO) build -o $(package_name)
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(GO) build -a -tags netgo -o $(package_name)
 
 xgo:
 	@(GO) get github.com/karalabe/xgo
