@@ -8,13 +8,13 @@ import (
 
 	log "github.com/golang/glog"
 
-	_ "github.com/couchbase/go_n1ql"     // register the Couchbase driver
-	_ "github.com/denisenkom/go-mssqldb" // register the MS-SQL driver
-	_ "github.com/godror/godror"    // register the Oracle DB driver
-	_ "github.com/go-sql-driver/mysql"   // register the MySQL driver
-	_ "github.com/ClickHouse/clickhouse-go"   // register the ClickHouse driver
-	_ "github.com/lib/pq"                // register the PostgreSQL driver
-	_ "github.com/mattn/go-sqlite3"      // register the SQLite3 driver
+	_ "github.com/ClickHouse/clickhouse-go" // register the ClickHouse driver
+	_ "github.com/couchbase/go_n1ql"        // register the Couchbase driver
+	_ "github.com/denisenkom/go-mssqldb"    // register the MS-SQL driver
+	_ "github.com/go-sql-driver/mysql"      // register the MySQL driver
+	_ "github.com/godror/godror"            // register the Oracle DB driver
+	_ "github.com/lib/pq"                   // register the PostgreSQL driver
+	_ "github.com/mattn/go-sqlite3"         // register the SQLite3 driver
 )
 
 // OpenConnection extracts the driver name from the DSN (expected as the URI scheme), adjusts it where necessary (e.g.
@@ -26,51 +26,56 @@ import (
 // dynamic way of loading a third party driver library (as e.g. with Java classpaths), so any driver additions require
 // a binary rebuild.
 //
-// MySQL
+// # MySQL
 //
 // Using the https://github.com/go-sql-driver/mysql driver, DSN format (passed to the driver stripped of the `mysql://`
 // prefix):
-//   mysql://username:password@protocol(host:port)/dbname?param=value
 //
-// PostgreSQL
+//	mysql://username:password@protocol(host:port)/dbname?param=value
+//
+// # PostgreSQL
 //
 // Using the https://godoc.org/github.com/lib/pq driver, DSN format (passed through to the driver unchanged):
-//   postgres://username:password@host:port/dbname?param=value
 //
-// MS SQL Server
+//	postgres://username:password@host:port/dbname?param=value
+//
+// # MS SQL Server
 //
 // Using the https://github.com/denisenkom/go-mssqldb driver, DSN format (passed through to the driver unchanged):
-//   sqlserver://username:password@host:port/instance?param=value
 //
-// Clickhouse
+//	sqlserver://username:password@host:port/instance?param=value
+//
+// # Clickhouse
 //
 // Using the https://github.com/kshvakov/clickhouse driver, DSN format (passed to the driver with the`clickhouse://`
 // prefix replaced with `tcp://`):
-//   clickhouse://host:port?username=username&password=password&database=dbname&param=value
 //
-// Oracle
+//	clickhouse://host:port?username=username&password=password&database=dbname&param=value
 //
-// Using the github.com/go-goracle/goracle driver, DSN format (passed to the driver with the `oracle://`` prefix):
+// # Oracle
 //
-//   oracle://user/passw@service_name
-//   oracle://username@[//]host[:port][/service_name][:server][/instance_name]
-//   oracle://user/pass@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=hostname)(PORT=port)))(CONNECT_DATA=(SERVICE_NAME=sn)))
+// Using the github.com/godror/godror driver, DSN format (passed to the driver with the `oracle://“ prefix):
 //
-// SQLite3
+//	oracle://user/passw@service_name
+//	oracle://username@[//]host[:port][/service_name][:server][/instance_name]
+//	oracle://user/pass@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=hostname)(PORT=port)))(CONNECT_DATA=(SERVICE_NAME=sn)))
 //
-// Using the github.com/mattn/go-sqlite3 driver, DSN format (passed to the driver with the `sqlite3://`` prefix):
-//   sqlite3://file:base.sqlite?param1=value1&param2=value2
+// # SQLite3
 //
-//   f.e sqlite3://file:mybase.db?cache=shared&mode=rwc
+// Using the github.com/mattn/go-sqlite3 driver, DSN format (passed to the driver with the `sqlite3://“ prefix):
 //
-// Couchbase
+//	sqlite3://file:base.sqlite?param1=value1&param2=value2
 //
-// Using the github.com/couchbase/go_n1ql driver, DSN format (passed to the driver with the `n1ql://`` prefix):
-//   Connecting to the instance:
-//   n1ql://localhost:8093@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s
-//   Connecting to the cluster:
-//   n1ql://http://localhost:9000/@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s
+//	f.e sqlite3://file:mybase.db?cache=shared&mode=rwc
 //
+// # Couchbase
+//
+// Using the github.com/couchbase/go_n1ql driver, DSN format (passed to the driver with the `n1ql://“ prefix):
+//
+//	Connecting to the instance:
+//	n1ql://localhost:8093@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s
+//	Connecting to the cluster:
+//	n1ql://http://localhost:9000/@creds=[{"user":"Administrator","pass":"admin123"}]@timeout=10s
 func OpenConnection(ctx context.Context, logContext, dsn string, maxConns, maxIdleConns int) (*sql.DB, error) {
 	// Extract driver name from DSN.
 	idx := strings.Index(dsn, "://")
@@ -85,7 +90,7 @@ func OpenConnection(ctx context.Context, logContext, dsn string, maxConns, maxId
 		dsn = strings.TrimPrefix(dsn, "mysql://")
 	case "oracle":
 		dsn = strings.TrimPrefix(dsn, "oracle://")
-		driver = "goracle"
+		driver = "godror"
 	case "sqlite3":
 		dsn = strings.TrimPrefix(dsn, "sqlite3://")
 	case "clickhouse":

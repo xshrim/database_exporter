@@ -1,4 +1,3 @@
-
 FROM oraclelinux:8
 # FROM        ghcr.io/oracle/oraclelinux7-instantclient:19
 
