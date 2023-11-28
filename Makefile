@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-GO    := CGO_ENABLED=1 go
+GO    := go
 pkgs   = ./
 package_name = database_exporter
 GOOS = linux

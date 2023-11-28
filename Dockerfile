@@ -1,9 +1,12 @@
-FROM        ghcr.io/oracle/oraclelinux7-instantclient:19
+
+FROM oraclelinux:8
+# FROM        ghcr.io/oracle/oraclelinux7-instantclient:19
+
 WORKDIR     /exporter/
 
 ADD         database_exporter.tgz /exporter/
 
-RUN         yum -y update && yum clean all && yum -y install libaio make gcc gcc-c++ glib-headers
+RUN         dnf -y update && dnf clean all && dnf -y install libaio make gcc gcc-c++ glibc-devel oracle-instantclient-release-el8 oracle-instantclient-basic oracle-instantclient-devel oracle-instantclient-sqlplus && rm -rf /var/cache/dnf
 
 EXPOSE      9285
 
