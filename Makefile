@@ -51,7 +51,7 @@ xgo:
 
 package: build
 	@echo ">> packaging release tarball"
-	@tar -zcvf $(package_name).tgz $(package_name) $(package_name).yml config
+	@tar -zcvf $(package_name).tgz $(package_name) $(package_name).yml config dashboard
 
 tarball: promu
 	@echo ">> building release tarball"
