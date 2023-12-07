@@ -35,6 +35,18 @@ metrics:
       select 
       count(*) "value" 
       from v$process
+  - metric_name: oracle_max_process
+    type: gauge
+    help: "Oracle v$parameter"
+    values:
+      - value
+    static_labels:
+      sys: ibp
+    query: |
+      select
+      value "value"
+      from v$parameter
+      where name='processes'
   - metric_name: oracle_sysstat
     type: counter
     help: "Oracle v$sysstat"
@@ -65,21 +77,21 @@ metrics:
       round(m.time_waited/m.INTSIZE_CSEC,3) "value"
       from v$waitclassmetric m, v$system_wait_class n
       where m.wait_class_id=n.wait_class_id and n.wait_class != 'Idle'
-  - metric_name: oracle_limit
+  - metric_name: oracle_resource
     type: counter
     help: "Oracle v$resource_limit"
     values:
       - value
     key_labels:
       - resource
-      - current
+      - limit
     static_labels:
       sys: ibp
     query: |
       select 
       resource_name "resource",
-      current_utilization "current",
-      case when trim(limit_value) like 'UNLIMITED' then '-1' else trim(limit_value) end "value"
+      current_utilization "value",
+      case when trim(limit_value) like 'UNLIMITED' then '-1' else trim(limit_value) end "limit"
       from v$resource_limit
   - metric_name: oracle_tablespace
     type: counter
@@ -104,3 +116,51 @@ metrics:
       dt.block_size * dtum.tablespace_size "total",
       dtum.used_percent "usedpct"
       from dba_tablespace_usage_metrics dtum, dba_tablespaces dt
+      where dtum.tablespace_name = dt.tablespace_name
+      order by dt.tablespace_name
+  - metric_name: oracle_metric
+    type: gauge
+    help: "Oracle v$metric"
+    values:
+      - value
+    key_labels:
+      - dbname
+      - name
+      - unit
+    static_labels:
+      sys: ibp
+    query: |
+      select
+      (select name from v$database) "dbname",
+      metric_name "name",
+      metric_unit "unit", 
+      sum(value) "value"
+      from v$metric 
+      group by metric_name, metric_unit
+  - metric_name: oracle_slowsql
+    type: gauge
+    help: "Oracle slow sql"
+    values:
+      - value
+    key_labels:
+      - sql
+      - times
+      - seconds
+      - type
+      - uid
+      - uname
+      - hash
+    static_labels:
+      sys: ibp
+    query: |
+      select sa.SQL_TEXT "sql",
+      sa.EXECUTIONS "times",
+      round(sa.ELAPSED_TIME / 1000000, 2) "seconds",
+      round(sa.ELAPSED_TIME / 1000000 / sa.EXECUTIONS, 2) "value",
+      sa.COMMAND_TYPE "type",
+      sa.PARSING_USER_ID "uid",
+      u.username "uname",
+      sa.HASH_VALUE "hash"
+      from v$sqlarea sa left join all_users u
+      on sa.PARSING_USER_ID = u.user_id
+      where sa.EXECUTIONS > 0 and sa.ELAPSED_TIME / 1000000 / sa.EXECUTIONS > 10
