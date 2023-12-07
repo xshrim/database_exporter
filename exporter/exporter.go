@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/golang/protobuf/proto"
@@ -48,7 +49,7 @@ func NewExporter(configFile string) (Exporter, error) {
 
 	var targets []Target
 	if c.Target != nil {
-		target, err := NewTarget("", "", string(c.Target.DSN), c.Target.Collectors(), nil, c.Globals)
+		target, err := NewTarget("", strings.ReplaceAll(strings.Split(string(c.Target.DSN), "://")[0], "n1ql", "couchbase"), string(c.Target.DSN), c.Target.Collectors(), nil, c.Globals)
 		if err != nil {
 			return nil, err
 		}
