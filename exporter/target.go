@@ -75,7 +75,7 @@ func NewTarget(
 		collectors = append(collectors, c)
 	}
 
-	upDesc := NewAutomaticMetricDesc(logContext, upMetricName, upMetricHelp, prometheus.GaugeValue, constLabelPairs)
+	upDesc := NewAutomaticMetricDesc(logContext, fmt.Sprintf("%s_%s", name, upMetricName), upMetricHelp, prometheus.GaugeValue, constLabelPairs)
 	scrapeDurationDesc :=
 		NewAutomaticMetricDesc(logContext, scrapeDurationName, scrapeDurationHelp, prometheus.GaugeValue, constLabelPairs)
 	t := target{

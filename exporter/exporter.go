@@ -38,14 +38,14 @@ func NewExporter(configFile string) (Exporter, error) {
 		return nil, err
 	}
 
-		// Override the DSN if requested (and in single target mode).
-		if *dsnOverride != "" {
-			if len(c.Jobs) > 0 {
-				return nil, fmt.Errorf("The config.data-source-name flag (value %q) only applies in single target mode", *dsnOverride)
-			} else {
-				c.Target.DSN = Secret(*dsnOverride)
-			}
+	// Override the DSN if requested (and in single target mode).
+	if *dsnOverride != "" {
+		if len(c.Jobs) > 0 {
+			return nil, fmt.Errorf("The config.data-source-name flag (value %q) only applies in single target mode", *dsnOverride)
+		} else {
+			c.Target.DSN = Secret(*dsnOverride)
 		}
+	}
 
 	var targets []Target
 	if c.Target != nil {
