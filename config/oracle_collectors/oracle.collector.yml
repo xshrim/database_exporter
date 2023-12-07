@@ -8,37 +8,99 @@ collector_name: oracle_metrics
 #min_interval: 0s
 
 metrics:
-  - metric_name: oracle_metric
+  - metric_name: oracle_session
     type: gauge
-    help: 'Oracle v$metric'
+    help: "Oracle v$session"
     values:
       - value
     key_labels:
-      - dbname
-      - name
-      - unit
-    query: |
-      select
-      (select name from v$database) "dbname",
-      metric_name "name",
-      metric_unit "unit", 
-      sum(value) "value"
-      from v$metric 
-      group by metric_name, metric_unit
-      
-  - metric_name: oracle_tablespace_size
-    type: gauge
-    help: 'Size of oracle db tablespaces.'
-    values:
-      - value
-    key_labels:
-      - tablespace_name
+      - status
+      - type
+    static_labels:
+      sys: ibp
     query: |
       select 
-        tablespace_name "tablespace_name", 
-        sum(bytes) "value" 
-      from 
-        dba_data_files 
-      group by 
-        tablespace_name
-
+      status "status", 
+      type "type", 
+      count(*) "value" 
+      from v$session group by status, type
+  - metric_name: oracle_process
+    type: gauge
+    help: "Oracle v$process"
+    values:
+      - value
+    static_labels:
+      sys: ibp
+    query: |
+      select 
+      count(*) "value" 
+      from v$process
+  - metric_name: oracle_sysstat
+    type: counter
+    help: "Oracle v$sysstat"
+    values:
+      - value
+    key_labels:
+      - name
+    static_labels:
+      sys: ibp
+    query: |
+      select 
+      name "name", 
+      value "value" 
+      from v$sysstat 
+      where name in ('parse count (total)', 'execute count', 'user commits', 'user rollbacks')
+  - metric_name: oracle_waittime
+    type: counter
+    help: "Oracle v$waitclassmetric"
+    values:
+      - value
+    key_labels:
+      - waitclass
+    static_labels:
+      sys: ibp
+    query: |
+      select 
+      n.wait_class "waitclass",
+      round(m.time_waited/m.INTSIZE_CSEC,3) "value"
+      from v$waitclassmetric m, v$system_wait_class n
+      where m.wait_class_id=n.wait_class_id and n.wait_class != 'Idle'
+  - metric_name: oracle_limit
+    type: counter
+    help: "Oracle v$resource_limit"
+    values:
+      - value
+    key_labels:
+      - resource
+      - current
+    static_labels:
+      sys: ibp
+    query: |
+      select 
+      resource_name "resource",
+      current_utilization "current",
+      case when trim(limit_value) like 'UNLIMITED' then '-1' else trim(limit_value) end "value"
+      from v$resource_limit
+  - metric_name: oracle_tablespace
+    type: counter
+    help: "Oracle dba_tablespaces"
+    values:
+      - used
+      - free
+      - total
+      - usedpct
+    value_label: "vkind"
+    key_labels:
+      - tablespace
+      - type
+    static_labels:
+      sys: ibp
+    query: |
+      select
+      dt.tablespace_name "tablespace",
+      dt.contents "type",
+      dt.block_size * dtum.used_space "used",
+      dt.block_size * (dtum.tablespace_size - dtum.used_space) "free",
+      dt.block_size * dtum.tablespace_size "total",
+      dtum.used_percent "usedpct"
+      from dba_tablespace_usage_metrics dtum, dba_tablespaces dt
