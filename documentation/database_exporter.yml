@@ -30,7 +30,7 @@ global:
 target:
   # Data source name always has a URI schema that matches the driver name. In some cases (e.g. MySQL)
   # the schema gets dropped or replaced to match the driver expected DSN format.
-  data_source_name: 'sqlserver://prom_user:prom_password@dbserver1.example.com:1433'
+  data_source_name: "sqlserver://prom_user:prom_password@dbserver1.example.com:1433"
 
   # Collectors (referenced by name) to execute on the target.
   collectors: [mssql_standard]
@@ -60,11 +60,14 @@ collectors:
       - metric_name: mssql_log_growths
         # This is a Prometheus counter (monotonically increasing value).
         type: counter
-        help: 'Total number of times the transaction log has been expanded since last restart, per database.'
+        help: "Total number of times the transaction log has been expanded since last restart, per database."
         # Optional set of labels derived from key columns.
         key_labels:
           # Populated from the `db` column of each row.
           - db
+        # Static label value pairs
+        static_labels:
+          sys: ibp
         # This query returns exactly one value per row, in the `counter` column.
         values: [counter]
         query: |
@@ -75,7 +78,7 @@ collectors:
       # A different metric, with multiple values produced from each result row.
       - metric_name: mssql_io_stall_seconds
         type: counter
-        help: 'Stall time in seconds per database and I/O operation.'
+        help: "Stall time in seconds per database and I/O operation."
         key_labels:
           # Populated from the `db` column of the result.
           - db
@@ -83,7 +86,7 @@ collectors:
         #
         # Required when multiple value columns are configured.
         value_label: operation
-        # Multiple value columns: their name is recorded in the label defined by `attrubute_label` (e.g. 
+        # Multiple value columns: their name is recorded in the label defined by `attrubute_label` (e.g.
         # `operation="io_stall_read_ms"`).
         values:
           - io_stall_read
@@ -93,7 +96,7 @@ collectors:
       # Another metric, uses same named query (referenced through query_ref) as mssql_io_stall_seconds.
       - metric_name: mssql_io_stall_total_seconds
         type: counter
-        help: 'Total stall time in seconds per database.'
+        help: "Total stall time in seconds per database."
         key_labels:
           # Populated from the `db` column of the result.
           - db
@@ -118,5 +121,5 @@ collectors:
           GROUP BY a.database_id
 
 # Collector files specifies a list of globs. One collector definition per file.
-collector_files: 
+collector_files:
   - "*.collector.yml"
