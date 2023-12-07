@@ -259,7 +259,7 @@ metrics:
 
 ### 数据源
 
-为了保持简单, 同时允许设置完全可配置的数据库连接, Database Exporter使用DSN(如`sqlserver://prom_user:prom_password@dbserver1.example.com:1433`) 来引用数据库实例. 但是, 由于Go `sql`库不允许基于DSN自动选择驱动程序(即必须指定显式驱动程序名称), 因此数据库导出程序使用DSN的架构部分(`://`之前的部分)来确定要使用的驱动程序.
+为了保持简单, 同时允许设置完全可配置的数据库连接, Database Exporter使用DSN(如`sqlserver://prom_user:prom_password@dbserver1.example.com:1433`) 来引用数据库实例. 但是, 由于Go `sql`库不允许基于DSN自动选择驱动程序(即必须指定显式驱动程序名称), 因此数据库导出程序使用DSN的schema部分(`://`之前的部分)来确定要使用的驱动程序.
 
 虽然这适用于MS SQL Server和PostgreSQL驱动程序, 但Oracle OCI8和MySQL驱动程序DSN格式不包含schema, 而Clickhouse使用`tcp://`. 因此Database Exporter对后两个驱动程序的DSN进行了一些处理, 以便使其正常工作:
 
