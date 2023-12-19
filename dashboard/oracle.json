@@ -18,8 +18,8 @@
   "editable": true,
   "gnetId": 11121,
   "graphTooltip": 1,
-  "id": 47,
-  "iteration": 1701914105346,
+  "id": 134,
+  "iteration": 1702962900843,
   "links": [
     {
       "asDropdown": true,
@@ -45,7 +45,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -132,7 +132,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -206,7 +206,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -291,7 +291,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -363,7 +363,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -439,7 +439,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -516,7 +516,7 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -637,6 +637,102 @@
                 "value": "语句HASH"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "用户ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 68
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "查询类型"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 82
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "用户名"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 68
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "总耗时(s)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 84
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "查询次数"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "平均耗时(s)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "语句HASH"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 116
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SQL语句"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 411
+              }
+            ]
           }
         ]
       },
@@ -649,7 +745,12 @@
       "id": 75,
       "options": {
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "语句HASH"
+          }
+        ]
       },
       "pluginVersion": "8.0.6",
       "targets": [
@@ -738,7 +839,7 @@
       "type": "table"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -748,7 +849,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "bars",
+            "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "hue",
             "hideFrom": {
@@ -834,7 +935,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1048,7 +1149,7 @@
       "type": "table"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "qy-team",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1241,10 +1342,10 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "172.253.81.11:9285",
-          "value": "172.253.81.11:9285"
+          "text": "172.21.131.19:9285",
+          "value": "172.21.131.19:9285"
         },
-        "datasource": "Prometheus",
+        "datasource": "qy-team",
         "definition": "label_values(oracle_up, instance)",
         "description": null,
         "error": null,
@@ -1374,7 +1475,7 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "数据库监控",
+  "title": "xxx系统数据库监控",
   "uid": "1ee82mJWk",
-  "version": 12
+  "version": 6
 }
